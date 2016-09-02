@@ -47,6 +47,10 @@ defmodule Mongo.Protocol do
     end
   end
 
+  def disconnect(_, _) do
+    :ok
+  end
+
   defp tcp_connect(opts, s) do
     host      = (opts[:hostname] || "localhost") |> to_char_list
     port      = opts[:port] || 27017
