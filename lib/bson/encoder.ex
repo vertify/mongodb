@@ -98,7 +98,7 @@ defmodule BSON.Encoder do
         {key, value}, {:atom, acc} when is_binary(key) ->
           invalid_doc(doc)
 
-        {key, _value}, {_, _acc} ->
+        {key, value}, {_, acc} ->
           {key_type, key} = key(key)
           type = type(value)
           value = encode(value)

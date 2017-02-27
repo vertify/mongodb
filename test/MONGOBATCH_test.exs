@@ -3,7 +3,13 @@ defmodule MONGOBATCHTest do
   import MONGOBATCH
   doctest MONGOBATCH
 
-  test "Execute unordered batch writes" do
+  setup_all do
+      assert {:ok, pid} = Mongo.start_link(hostname: "localhost", database: "test", port: "27001")
+      {:ok, [pid: pid]}
+  end
+
+  @tag :skip
+  test "Execute unordered batch writes", c do
     # Define write document
     writedocument = %{
       collection: "mycollection",
@@ -44,8 +50,7 @@ defmodule MONGOBATCHTest do
       },
       ordered: false
     }
-    {:ok, mpid} = Mongo.start_link(database: "test")
-    results = MONGOBATCH.batchwrite(mpid, writedocument)
+    results = MONGOBATCH.batchwrite(c.pid, writedocument)
     IO.puts("Test Results:")
     IO.inspect(results)
     assert(length(results.deleteresults.documents) == 9)
