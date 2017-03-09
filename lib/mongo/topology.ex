@@ -198,7 +198,7 @@ defmodule Mongo.Topology do
     end)
   end
 
-  @connect_opts [:database, :pool]
+  @connect_opts [:database, :pool, :username, :password, :authsource]
   defp connect_opts_from_address(opts, address) do
     host_opts =
       "mongodb://" <> address
