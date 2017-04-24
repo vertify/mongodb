@@ -691,7 +691,7 @@ defmodule Mongo do
     _select_servers(topology, type, opts, start_time)
   end
 
-  @sel_timeout 30000
+  @sel_timeout 3000
   defp _select_servers(topology, type, opts, start_time) do
     with {:ok, servers, slave_ok, mongos?} <- TopologyDescription.select_servers(topology, type, opts) do
       if Enum.empty? servers do

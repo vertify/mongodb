@@ -56,7 +56,10 @@ defmodule Mongo.TopologyDescription do
     if topology[:compatible] == false do
       {:error, :invalid_wire_version}
     else
-      {servers, slave_ok, mongos?} = case topology.type do
+      {servers, slave_ok, mongos?} = {topology.servers, false, false}
+      # FIXME: This will sometimes, under higher loads, return an empty set of
+      # servers.  Primarily from select_replica_set_server.
+      {_servers, _slave_ok, _mongos?} = case topology.type do
         :unknown ->
           {[], false, false}
         :single ->
@@ -72,13 +75,14 @@ defmodule Mongo.TopologyDescription do
           case type do
             :read ->
               {select_replica_set_server(topology, read_preference.mode, read_preference), true, false}
-
             :write ->
               if topology.type == :replica_set_with_primary do
                 {select_replica_set_server(topology, :primary, ReadPreference.defaults), false, false}
               else
                 {[], false, false}
               end
+            _ ->
+              {[], false, false}
           end
       end
 
@@ -92,6 +96,8 @@ defmodule Mongo.TopologyDescription do
 
   ## Private Functions
 
+  # FIXME: This will, under high load, return an empty set of servers when
+  # normally it would return the correct set.
   defp select_replica_set_server(topology, mode, read_preference)
       when mode in [:primary, :primary_preferred] do
     primary = Enum.filter(topology.servers, fn {_, server} ->
