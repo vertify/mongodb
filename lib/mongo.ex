@@ -53,7 +53,7 @@ defmodule Mongo do
   alias Mongo.TopologyDescription
   alias Mongo.Topology
 
-  @timeout 5000
+  @timeout 10000
 
   @type collection :: String.t
   @opaque cursor :: Mongo.Cursor.t | Mongo.AggregationCursor.t | Mongo.SinglyCursor.t
@@ -834,6 +834,7 @@ defmodule Mongo do
 
   defp defaults(opts \\ []) do
     Keyword.put_new(opts, :timeout, @timeout)
+    |> Keyword.put_new(:pool_timeout, @timeout)
   end
 
   defp get_last_error(:ok) do

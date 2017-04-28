@@ -59,32 +59,32 @@ defmodule Mongo.TopologyDescription do
       {servers, slave_ok, mongos?} = {topology.servers, false, false}
       # FIXME: This will sometimes, under higher loads, return an empty set of
       # servers.  Primarily from select_replica_set_server.
-      {_servers, _slave_ok, _mongos?} = case topology.type do
-        :unknown ->
-          {[], false, false}
-        :single ->
-          server =
-            topology.servers |> Map.values |> Enum.at(0, %{type: :unknown})
-          {topology.servers, type != :write and server.type != :mongos, server.type == :mongos}
-        :sharded ->
-          mongos_servers =
-            topology.servers
-            |> Enum.filter(fn {_, server} -> server.type == :mongos end)
-          {mongos_servers, false, true}
-        _ ->
-          case type do
-            :read ->
-              {select_replica_set_server(topology, read_preference.mode, read_preference), true, false}
-            :write ->
-              if topology.type == :replica_set_with_primary do
-                {select_replica_set_server(topology, :primary, ReadPreference.defaults), false, false}
-              else
-                {[], false, false}
-              end
-            _ ->
-              {[], false, false}
-          end
-      end
+      #{_servers, _slave_ok, _mongos?} = case topology.type do
+      #  :unknown ->
+      #    {[], false, false}
+      #  :single ->
+      #    server =
+      #      topology.servers |> Map.values |> Enum.at(0, %{type: :unknown})
+      #    {topology.servers, type != :write and server.type != :mongos, server.type == :mongos}
+      #  :sharded ->
+      #    mongos_servers =
+      #      topology.servers
+      #      |> Enum.filter(fn {_, server} -> server.type == :mongos end)
+      #    {mongos_servers, false, true}
+      #  _ ->
+      #    case type do
+      #      :read ->
+      #        {select_replica_set_server(topology, read_preference.mode, read_preference), true, false}
+      #      :write ->
+      #        if topology.type == :replica_set_with_primary do
+      #          {select_replica_set_server(topology, :primary, ReadPreference.defaults), false, false}
+      #        else
+      #          {[], false, false}
+      #        end
+      #      _ ->
+      #        {[], false, false}
+      #    end
+      #end
 
       servers =
         for {server, _} <- servers do
