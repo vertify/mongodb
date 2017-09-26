@@ -40,7 +40,7 @@ defmodule BatchUpdate do
 end
 #---------------------------------------------------------------------------#
 defmodule BatchDeleteDocument do
-  defstruct q: %{}, limit: 1
+  defstruct q: %{}, limit: 0
 end
 #---------------------------------------------------------------------------#
 defmodule BatchDelete do
