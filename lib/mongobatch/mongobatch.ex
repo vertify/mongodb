@@ -382,10 +382,14 @@ defmodule MONGOBATCH do
         # Get maxdocsize page breaks
         deletefullpageindices = getpagebreaks(deletedoclist)
         # Write deletes
+        deletes = Enum.map(deletedoclist,
+          fn deletedoc ->
+            Map.put(deletedoc, :limit, 0)
+          end)
         deleteresultset = if Enum.empty?(deletefullpageindices) do
-          [submittomongo(mpid, %{deletetemplate | deletes: deletedoclist})]
+          [submittomongo(mpid, %{deletetemplate | deletes: deletes})]
         else
-          deletepages(mpid, deletetemplate, deletedoclist, deletefullpageindices, [])
+          deletepages(mpid, deletetemplate, deletes, deletefullpageindices, [])
         end
         Map.put(result, :deleteresults, combineresults(deleteresultset))
       else
